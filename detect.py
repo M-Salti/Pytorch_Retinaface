@@ -86,6 +86,9 @@ if __name__ == '__main__':
 
     resize = 1
 
+    save_folder = Path(args.save_folder)
+    save_folder.mkdir(exist_ok=True, parents=True)
+
     # testing begin
     for image_path in tqdm(args.images):
         print(f"Processing {image_path}")
@@ -168,6 +171,6 @@ if __name__ == '__main__':
             # save image
 
             name = Path(image_path).name
-            save_path = Path(args.save_folder) / name
+            save_path = save_folder / name
             print(f"Saving result to {save_path}")
             cv2.imwrite(str(save_path), img_raw)

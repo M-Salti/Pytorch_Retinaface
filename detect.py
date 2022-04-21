@@ -11,9 +11,13 @@ import cv2
 from models.retinaface import RetinaFace
 from utils.box_utils import decode, decode_landm
 import time
+from pathlib import Path
+from tqdm.auto import tqdm
 
 parser = argparse.ArgumentParser(description='Retinaface')
 
+parser.add_argument("--images", nargs="+", type=str, help="images")
+parser.add_argument("--save_folder", default="./retinaface_pytorch_results", help="Directory for detect results")
 parser.add_argument('-m', '--trained_model', default='./weights/Resnet50_Final.pth',
                     type=str, help='Trained state_dict file path to open')
 parser.add_argument('--network', default='resnet50', help='Backbone network mobile0.25 or resnet50')
@@ -83,8 +87,8 @@ if __name__ == '__main__':
     resize = 1
 
     # testing begin
-    for i in range(100):
-        image_path = "./curve/test.jpg"
+    for image_path in tqdm(args.images):
+        print(f"Processing {image_path}")
         img_raw = cv2.imread(image_path, cv2.IMREAD_COLOR)
 
         img = np.float32(img_raw)
@@ -163,6 +167,7 @@ if __name__ == '__main__':
                 cv2.circle(img_raw, (b[13], b[14]), 1, (255, 0, 0), 4)
             # save image
 
-            name = "test.jpg"
-            cv2.imwrite(name, img_raw)
-
+            name = Path(image_path).name
+            save_path = Path(args.save_folder) / name
+            print(f"Saving result to {save_path}")
+            cv2.imwrite(str(save_path), img_raw)
